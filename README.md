@@ -243,31 +243,34 @@ Revenue, cost, profit, and product performance with Excel export.
 
 ## 🏗 Architecture
 
-```mermaid
-flowchart LR
-    subgraph browser [Browser]
-        ui[Django templates and JS]
-        cam[Camera barcode scanner]
-    end
-
-    subgraph django [Django application]
-        auth[Auth and role permissions]
-        views[Inventory, POS, Returns, Clients, Promotions, Reports]
-        api[REST API - DRF]
-        svc[Pillow, ReportLab, python-barcode, openpyxl]
-    end
-
-    db[(SQLite or PostgreSQL)]
-    media[(Product images)]
-
-    cam --> ui
-    ui -- HTTPS and CSRF --> auth
-    auth --> views
-    auth --> api
-    views --> svc
-    views --> db
-    api --> db
-    svc --> media
+```text
+┌─────────────────────────────────────────────────────────┐
+│  BROWSER                                                │
+│  Django templates · Bootstrap · JavaScript              │
+│  Camera barcode scanner (html5-qrcode)                  │
+└────────────────────────────┬────────────────────────────┘
+                             │  HTTPS + CSRF
+┌────────────────────────────▼────────────────────────────┐
+│  DJANGO APPLICATION                                     │
+│                                                         │
+│  Authentication & role-based permissions                │
+│                                                         │
+│  ┌───────────────────────────┐  ┌─────────────────────┐ │
+│  │ Views                     │  │ REST API (DRF)      │ │
+│  │ Inventory · POS · Returns │  │ Products · Clients  │ │
+│  │ Clients · Promotions      │  │ Orders              │ │
+│  │ Reports · Personnel       │  │                     │ │
+│  └───────────────────────────┘  └─────────────────────┘ │
+│                                                         │
+│  Services: Pillow · ReportLab · barcode · openpyxl      │
+└────────────────────────────┬────────────────────────────┘
+                             │
+         ┌───────────────────┴───────────────────┐
+         ▼                                       ▼
+┌─────────────────────┐               ┌─────────────────────┐
+│ SQLite / PostgreSQL │               │ Media storage       │
+│ (application data)  │               │ (product images)    │
+└─────────────────────┘               └─────────────────────┘
 ```
 
 **Core domain model:** `Product` → `ProductVariant` → `StockLevel` / `Barcode` / `StockMovement` ·

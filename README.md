@@ -245,27 +245,29 @@ Revenue, cost, profit, and product performance with Excel export.
 
 ```mermaid
 flowchart LR
-    subgraph Client["Browser"]
-        UI["Django templates<br/>Bootstrap + JS"]
-        CAM["Camera scanner<br/>html5-qrcode"]
+    subgraph browser [Browser]
+        ui[Django templates and JS]
+        cam[Camera barcode scanner]
     end
 
-    subgraph App["Django application"]
-        AUTH["Auth & role<br/>permissions"]
-        VIEWS["Views<br/>Inventory · POS · Returns<br/>Clients · Promotions · Reports"]
-        API["REST API<br/>(DRF)"]
-        SVC["Services<br/>Pillow · ReportLab<br/>python-barcode · openpyxl"]
+    subgraph django [Django application]
+        auth[Auth and role permissions]
+        views[Inventory, POS, Returns, Clients, Promotions, Reports]
+        api[REST API - DRF]
+        svc[Pillow, ReportLab, python-barcode, openpyxl]
     end
 
-    DB[("SQLite / PostgreSQL")]
-    MEDIA[("Media storage<br/>product images")]
+    db[(SQLite or PostgreSQL)]
+    media[(Product images)]
 
-    UI -->|"HTTPS + CSRF"| AUTH --> VIEWS
-    CAM --> UI
-    VIEWS --> SVC
-    VIEWS --> DB
-    API --> DB
-    SVC --> MEDIA
+    cam --> ui
+    ui -- HTTPS and CSRF --> auth
+    auth --> views
+    auth --> api
+    views --> svc
+    views --> db
+    api --> db
+    svc --> media
 ```
 
 **Core domain model:** `Product` → `ProductVariant` → `StockLevel` / `Barcode` / `StockMovement` ·
